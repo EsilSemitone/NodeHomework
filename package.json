@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "name": "nodehomework",
+  "version": "1.0.0",
+  "description": "homework for purpleSchool",
+  "main": "index.js",
+ 
+  "scripts": {
+    "test": ""
+  },
+  "author": "Esil",
+  "license": "ISC"
+}
