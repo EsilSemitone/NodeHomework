@@ -1,4 +1,4 @@
-export function divide(...args) {
+export function divide(args) {
     if (args.slice(1).includes('0')) {
         throw new Error('На ноль делить нельзя')
     }

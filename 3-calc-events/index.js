@@ -11,45 +11,38 @@ const command = process.argv.slice(-1);
 
 const myEmmiter = new EventEmmiter();
 
-myEmmiter.on('calculation', (args, command) => {
-    try {
-        const res = operations[command](...args);
-        if (isNaN(res)) {
-            console.log('Программа принимает только числа и команду')
-            return;
-        }
-        myEmmiter.emit('showResult', res) 
-    } 
-    catch(e) {
-        myEmmiter.emit('showResult', e.message) 
-    }
-    
+const operations = {
+    add,
+    divide,
+    mod,
+    multiply,
+    subtract
+}
+
+myEmmiter.on(command, (args) => {
+    //Правильно?
+    console.log(operations[command](args)) 
 })
 
-myEmmiter.on('showResult', res => console.log(res))
-
-
-const operations = {
-    'add': add,
-    'divide': divide,
-    'mod': mod,
-    'multiply': multiply,
-    'subtract': subtract
+function isValidNumbers(arr) {
+    for (const el of arr) {
+        if (isNaN(el)) return false;
+    }
+    return true;
 }
 
 function main() {
     if (numbers.length < 2) {
-        console.log('Необходимо ввести 2 или более числа!');
-        return;
+        throw new Error('Необходимо ввести 2 или более числа!');
     }
     if (!operations.hasOwnProperty(command)) {
-        console.log('Операция не введена или введена неправильно!')
-        return;
+        throw new Error('Операция не введена или введена неправильно!')
     }
-    myEmmiter.emit('calculation', numbers, command)
+    if (!isValidNumbers(numbers)) {
+        throw new Error('Программа принимает только числа и команду');
+    }
+    myEmmiter.emit(command, numbers)
     
 }
 
 main();
-
-
