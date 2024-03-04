@@ -1,3 +1,3 @@
-export function add(...args) {
+export function add(args) {
     return args.reduce((a, b) => +a + +b);
 }

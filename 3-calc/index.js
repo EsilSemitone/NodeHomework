@@ -8,35 +8,33 @@ const numbers = process.argv.slice(2, -1);
 const command = process.argv.slice(-1);
 
 const operations = {
-    'add': add,
-    'divide': divide,
-    'mod': mod,
-    'multiply': multiply,
-    'subtract': subtract
+    add,
+    divide,
+    mod,
+    multiply,
+    subtract
+}
+
+function isValidNumbers(arr) {
+    for (const el of arr) {
+        if (isNaN(el)) return false;
+    }
+    return true;
 }
 
 function main() {
     if (numbers.length < 2) {
-        console.log('Необходимо ввести 2 или более числа!');
-        return;
+        throw new Error('Необходимо ввести 2 или более числа!');
     }
     if (!operations.hasOwnProperty(command)) {
-        console.log('Операция не введена или введена неправильно!')
-        return;
+        throw new Error('Операция не введена или введена неправильно!')
     }
-    try {
-        const result = operations[command](...numbers);
+    if (!isValidNumbers(numbers)) {
+        throw new Error('Программа принимает только числа и команду');
+    }
 
-        if (isNaN(result)) {
-            console.log('Программа принимает только числа и команду')
-            return;
-        }
-        console.log(result)
-    }
-    catch(e) {
-        console.log(e.message)
-    }
-    
+    const result = operations[command](numbers);
+    console.log(result)
 }
 
 main();
