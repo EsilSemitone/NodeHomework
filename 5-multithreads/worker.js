@@ -5,12 +5,12 @@ function findNumbers({arr}) {
     let count = 0;
 
     arr.forEach(el => {
-        if (el % 3 == 0) {
+        if (el % 3 === 0) {
             count++
         }
     });
     performance.mark('endWork');
-    const {name, startTime, duration} = performance.measure('worker', 'startWork', 'endWork')
+    const {startTime, duration} = performance.measure('worker', 'startWork', 'endWork')
     console.log(`worker -> start: ${startTime}  duration: ${duration}`)
     return count
 }

@@ -1,27 +1,33 @@
 import {Worker} from 'worker_threads';
 import { PerformanceObserver } from 'perf_hooks';
+import { cpus } from 'os';
+
+const CORES = cpus().length;
+const ARRAY_LENGTH = 300_000;
 
 const myPerformance = new PerformanceObserver((item) => {
+
     for (let i of item.getEntriesByType('measure')) {
         console.log(`${i.name} ->  start: ${i.startTime}  duration: ${i.duration}`)
     }
 })
 
+//Если observe перенести в конец он перестает работать :)
 myPerformance.observe({entryTypes: ['measure']})
-
-const arr = createArray();
-let count = 0;
-const cores = 4;
 
 function createArray() {
     const result = [];
-    for (let i = 1; i < 300000; i++) {
+    for (let i = 1; i < ARRAY_LENGTH; i++) {
         result.push(i)
     }
     return result;
 }
 
-function syncFindNumbers(arr) {
+function syncFindNumbers() {
+
+    let count = 0;
+    const arr = createArray();
+
     performance.mark('syncStart')
     arr.forEach(el => {
         if (el % 3 == 0) {
@@ -33,23 +39,18 @@ function syncFindNumbers(arr) {
     return(count)
 }
 
-async function asyncFindNumbers(arr, cores) {
-    performance.mark('asyncStart');
-
-    const workArrays = [];
-    const arrayStep = Math.ceil(arr.length / cores);
+async function asyncFindNumbers() {
     
-    for (let i = 0; i < arr.length; i += arrayStep) {
-        workArrays.push(arr.slice(i, i + arrayStep));
-    }
+    const workArrays = createArrayForWorker(CORES);
 
-    const result = await Promise.all([
-        ...workArrays.map(array => workFindNumbers(array)),
-    ])
-
+    performance.mark('asyncStart');
+    const result = await Promise.all(
+        workArrays.map(array => workFindNumbers(array, './worker.js')),
+    )
+    
     performance.mark('asyncEnd');
     performance.measure('asyncCalculate', 'asyncStart', 'asyncEnd');
-
+    
     return result.reduce((a, b) => a + b);
 }
 
@@ -59,17 +60,29 @@ function workFindNumbers(arr) {
             workerData: {
                 arr
             }
-        }) 
-
+        })
+        
         myWorker.on('message', (msg) => {
             resolve(msg)
         })
-
+        
         myWorker.on('error', (err) => {
             reject(err)
         })
     })
 }
 
-console.log(`sync ->  ${syncFindNumbers(arr)}`);
-console.log(`async ->  ${await asyncFindNumbers(arr, cores)}`);
+function createArrayForWorker(cores) {
+    const arr = createArray();
+    const workArrays = [];
+    const arrayStep = Math.ceil(arr.length / cores);
+    
+    for (let i = 0; i < arr.length; i += arrayStep) {
+        workArrays.push(arr.slice(i, i + arrayStep));
+    }
+
+    return workArrays;
+}
+
+console.log(`sync count numbers ->  ${syncFindNumbers()}`);
+console.log(`async count numbers ->  ${await asyncFindNumbers()}`);
