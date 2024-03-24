@@ -4,10 +4,12 @@
   "version": "1.0.0",
   "description": "homework for purpleSchool",
   "main": "index.js",
- 
   "scripts": {
     "test": ""
   },
   "author": "Esil",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-notifier": "^10.0.1"
+  }
 }
