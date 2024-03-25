@@ -1,0 +1,62 @@
+{
+    "ru": {
+        "city": {
+            "not_set_city": "Не установлен Город, установить -s {city}",
+            "city_not_handed": "Не передан город",
+            "city_is_handed": "Город успешно установлен"
+        },
+        "token": {
+            "not_set_token": "Не установлен Token, установить -t {Token}",
+            "invalid_token": "Не верно указан токен",
+            "token_not_handed": "Не передан токен",
+            "token_is_handed": "Токен успешно установлен"
+        },
+        "lang": {
+            "lang_not_handed": "Не передан язык",
+            "lang_is_handed": "Язык успешно установлен"
+        },
+        "main": {
+            "help": "Для того чтобы пользоваться этой утилитой необходимо получить api ключ на сайте openweathermap.org\nКоманды:\n-h помошь\n-t [TOKEN] Установка api токена для получения данных о погоде\n-s Установка города\n-reset Сброс файла с конфигурациями\n-lang [ru | en] установить язык", 
+            "success_reset": "Файл с конфигурациями успешно сброшен! \n Нехобходимо заполнить город и токен!",
+            "outside": "на улице",
+            "degrees": "градусов",
+            "misssing_file": "Отсутствует файл с настройками, основыне команды -help"
+        },
+        "other": {
+            "not_set_some_arg": "Один из параметров не установлен или файл конфигураций \n поврежден, если ошибка не повторится необходимо сбросить файл конфигураций -reset",
+            "invalin_some_arg": "Не верно указан город или токен, удостоверьтесь что введи данные верно",
+            "setting_not_save": "Не сохранен файл с конфигурациями"
+        }
+        
+    },
+    "en": {
+        "city": {
+            "not_set_city": "city was not set, set -s {city}",
+            "city_not_handed": "city was not handed",
+            "city_is_handed": "city was set"
+        },
+        "token": {
+            "not_set_token": "token was not set, set -t {Token}",
+            "invalid_token": "nvalid token was set",
+            "token_not_handed": "Noken was not handed",
+            "token_is_handed": "Token was set"
+        },
+        "lang": {
+            "lang_not_handed": "language was not handed",
+            "lang_is_handed": "Language was set"
+        },
+        "main": {
+            "help": "In order to use this utility you need to get an api key at openweathermap.org\nCommands:\n-h help\n-t [TOKEN] Set api token for weather data\n-s Set city\n-reset Reset configuration file\n-lang [ru | en] set language.", 
+            "success_reset": "The configuration file has been successfully reset! \nYou do not need to fill in the city and token!",
+            "outside": "outside",
+            "degrees": "degrees",
+            "misssing_file": "Settings file is missing, basic commands -help"
+        },
+        "other": {
+            "not_set_some_arg": "One of the parameters is not set or the configuration file\n is corrupted, if the error does not recur, you must reset the configuration file -reset",
+            "invalin_some_arg": "Incorrect city or token, please make sure to enter the data correctly",
+            "setting_not_save": "Configuration file not saved"
+        }
+        
+    }
+}
