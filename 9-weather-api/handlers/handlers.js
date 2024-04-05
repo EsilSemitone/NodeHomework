@@ -1,60 +1,80 @@
-import { getWeatherToday } from "./tools/api.service.js"
-import { Storage } from "./tools/storage.service.js";
+import { getWeatherToday } from "../services/api.service.js"
+import { Storage } from "../services/storage.service.js";
+import { WeatherResponse, CityList, City } from "../tools/response/response.js";
+import { ServerError } from "../tools/error/response.error.js";
 
-async function getWeather(req, res) {
-    // Почему ошибки отловленные в этих функциях не попадают в роутер use?
+//Без try catch ошибки не отлавливаются обработчиком ошибок
+
+async function getWeatherWithQueryParam(req, res, next) {
+    const city = req.query.city;
+
+    if (city) {
+        try {
+            const response = await getWeatherToday(req.query.city, await Storage.getValue('token'));
+    
+            const cities = new CityList()
+                .push(new City(response.name, response.weather[0].description, response.main.temp))
+    
+            res.send(new WeatherResponse('Success', 200, cities));
+            return;
+
+        } catch(err) {
+            next(err)
+        }
+    }
+    next()
+}
+
+
+async function getWeather(req, res, next) {
+    
     try {
-        let data = {}
+        const [city, token] = [await Storage.getValue('city'), await Storage.getValue('token')];
+
+        const responseArray = await Promise.all(city.map(c => getWeatherToday(c, token)))
     
-        if (Object.keys(req.query).length) {
-    
-            for await (let city of getWeatherToday([req.query.city], req.query.token)) {
-                data[city.name] = {
-                    description: city.weather[0].description,
-                    temp: city.main.temp
-                }
-            }
-            res.send(data)
-        }
-        else {
-            let [city, token] = [await Storage.getCity(), await Storage.getToken()]
-            if (!city || !token) throw new Error(`Not set city or token`)
+        const citiesArray = responseArray.map(city => {
+            return new City(city.name, city.weather[0].description, city.main.temp)
+        })
         
-            for await (let c of getWeatherToday(city, token)) {
-    
-                data[c.name] = {
-                    description: c.weather[0].description,
-                    temp: c.main.temp
-                }
-            }
-            res.send(data)
+        res.send(new WeatherResponse('Success', 200, citiesArray));
+
+    } catch(err) {
+        next(err)
+    }
+}
+
+
+async function setSettingsMiddleware(req, res, next) {
+    try {
+        if (!req.query.city && !req.query.token) {
+            throw new ServerError('No set arguments or these was set wrong', 404)
         }
+    } catch(err) {
+        next(err)
     }
-    catch(e) {
-        res.statusCode = 500;
-        res.send({error: e.message})
-    }
+    
+    next()
 }
 
-async function setSettings(req, res) {
+async function setSettings(req, res, next) {
 
-    if (!Object.keys(req.query).length) {
-        res.statusCode = 400;
-        res.send({status: 'Arguments was not be handed'});
-        return;
+    for (const [key, value] of Object.entries(req.query)) {
+        Storage.save(key, value)
     }
 
-    for await (let [key, value] of Object.entries(req.query)) {
-        Storage.saveKeyValue(key, value);
+    res.send(new WeatherResponse('Success', 200));
+}
+
+async function deleteWeather(req, res, next) {
+    try {
+        await Storage.reset();
+    } catch (err) {
+        next(err)
     }
 
-    res.send({status: "success"})
+    res.send(new WeatherResponse('Success', 200))
 }
 
-async function deleteWeather(req, res) {
-    await Storage.reset();
 
-    res.send({status: "success"})
-}
-
-export {getWeather, setSettings, deleteWeather}
+export {getWeather, setSettings, deleteWeather, getWeatherWithQueryParam, setSettingsMiddleware}

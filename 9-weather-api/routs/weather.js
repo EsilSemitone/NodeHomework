@@ -1,15 +1,15 @@
 import express from 'express';
-import { getWeather, setSettings, deleteWeather } from '../handlers/handlers.js';
+import { getWeather, setSettings, deleteWeather, getWeatherWithQueryParam, setSettingsMiddleware } from '../handlers/handlers.js';
+import { ErrorResponse } from '../tools/response/response.js';
 
 const weatherRout = express.Router();
 
-weatherRout.use((err, req, res, next) => {
-    //Почему сюда не попадают ошибки из GET, POST и тд?
-    res.send(err.message)
-});
-
-weatherRout.get('/', getWeather);
-weatherRout.post('/', setSettings);
+weatherRout.get('/', getWeatherWithQueryParam, getWeather);
+weatherRout.post('/', setSettingsMiddleware, setSettings);
 weatherRout.delete('/', deleteWeather)
+
+weatherRout.use((err, req, res, next) => {
+    res.send(new ErrorResponse(err.message, err.statusCode || 404));
+})
 
 export {weatherRout};
