@@ -10,6 +10,9 @@
   "author": "Esil",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.8",
+    "chalk": "^5.3.0",
+    "dedent-js": "^1.0.1"
     "node-notifier": "^10.0.1"
   }
 }
