@@ -1,0 +1,22 @@
+{
+  "name": "custom_weather_api",
+  "version": "1.0.0",
+  "description": "custom output for https://openweathermap.org/",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "weather",
+    "setting",
+    "api",
+    "custom"
+  ],
+  "author": "Esil",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "express": "^4.19.1"
+  }
+}
